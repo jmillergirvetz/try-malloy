@@ -50,4 +50,17 @@ source: airports is table('duckdb:airports.csv') {
   //   (https://malloydata.github.io/documentation/language/expressions.html#pick-expressions).
   //   Perhaps bucket elevation into low (0-1000 ft), medium (1000-5000 ft),
   //   and high (>5000ft)
+
+dimension: elevation_tier is
+  pick 'high' when elevation > 5000
+  pick 'medium' when elevation <= 5000 and elevation > 1000
+  pick 'low' when elevation <= 1000
+  else ''
+
+query: by_elevation_tier is {
+  group_by: elevation_tier
+  aggregate: airport_count
 }
+
+}
+
